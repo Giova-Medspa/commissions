@@ -314,25 +314,32 @@ async function fetchDetails(providerName) {
       return;
     }
 
-    const tableRows = periodRows.map(r => `
+    const tableRows = periodRows.map(r => {
+      // Handle Excel serial date numbers
+      let dateVal = r['Date'] || '—';
+      if (typeof dateVal === 'number') {
+        const d = new Date((dateVal - 25569) * 86400000);
+        dateVal = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
+      }
+      return `
       <tr>
-        <td>${r['Client Name'] || '—'}</td>
-        <td>${r['Services'] || '—'}</td>
-        <td>${r['Date'] || '—'}</td>
-        <td class="num">${fmt(money(r['Subtotal']))}</td>
-        <td class="num" style="font-weight:700">${fmt(money(r['Commission Amount']))}</td>
+        <td>${r['Client'] || '—'}</td>
+        <td>${r['Item'] || '—'}</td>
+        <td>${dateVal}</td>
+        <td class="num">${fmt(money(r['Amount']))}</td>
+        <td class="num" style="font-weight:700">${fmt(money(r['Commission']))}</td>
       </tr>
-    `).join('');
+    `;}).join('');
 
     document.getElementById('lineItems').innerHTML = `
       <div class="section-label" style="margin-top:40px">Line Item Breakdown</div>
       <table class="data-table">
         <thead>
           <tr>
-            <th>Client Name</th>
-            <th>Services</th>
+            <th>Client</th>
+            <th>Item</th>
             <th>Date</th>
-            <th class="num">Subtotal</th>
+            <th class="num">Amount</th>
             <th>Commission</th>
           </tr>
         </thead>
