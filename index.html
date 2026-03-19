@@ -307,7 +307,7 @@ async function fetchDetails(providerName) {
     const wb = XLSX.read(csv, {type:'string'});
     const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
 
-    const periodRows = rows.filter(r => !r['Pay Period'] || r['Pay Period'] === SELECTED_PERIOD);
+    const periodRows = rows;
 
     if(periodRows.length === 0) {
       document.getElementById('lineItems').innerHTML = `<div style="text-align:center;padding:20px;color:var(--g-pigeon);font-size:12px">No detail rows found for this period.</div>`;
