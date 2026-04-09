@@ -128,6 +128,10 @@ body { font-family: 'Lato', sans-serif; background: var(--g-vanilla); color: var
     <select id="providerSelect" class="ctrl-select" onchange="updateView()">
       <option value="all">All Providers</option>
     </select>
+    <a id="viewWorkbookBtn" href="#" target="_blank" class="action-btn" style="padding:6px 14px;font-size:10px;letter-spacing:2px;text-decoration:none;display:inline-flex;align-items:center;gap:5px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      View Workbook
+    </a>
   </div>
 
   <div id="content">
@@ -204,6 +208,7 @@ async function loadData() {
       pSel.add(new Option(wb.label, wb.id));
     });
     SELECTED_PERIOD = COMMISSION_WORKBOOKS[0].id;
+    updateWorkbookLink();
 
     const prSel = document.getElementById('providerSelect');
     provArr.forEach(p => prSel.add(new Option(p, p)));
@@ -219,6 +224,11 @@ async function loadData() {
 /* ============================================
    ROUTING / VIEW UPDATES
    ============================================ */
+function updateWorkbookLink() {
+  var btn = document.getElementById('viewWorkbookBtn');
+  if (btn) btn.href = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/edit';
+}
+
 function updateView() {
   const newPeriod = document.getElementById('periodSelect').value;
   SELECTED_PROV = document.getElementById('providerSelect').value;
@@ -227,6 +237,7 @@ function updateView() {
   if (newPeriod !== SELECTED_PERIOD) {
     SELECTED_PERIOD = newPeriod;
     SHEET_ID = newPeriod;
+    updateWorkbookLink();
     loadData();
     return;
   }
