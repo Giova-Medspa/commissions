@@ -201,15 +201,14 @@ async function loadData() {
 
     const provArr = Array.from(providers);
 
-    // Populate pay period dropdown from workbooks list (only on first load)
+    // Populate pay period dropdown — always rebuild to stay in sync
     const pSel = document.getElementById('periodSelect');
-    if (pSel.options.length <= 1) {
-      pSel.innerHTML = '';
-      COMMISSION_WORKBOOKS.forEach(function(wb) {
-        pSel.add(new Option(wb.label, wb.id));
-      });
-    }
-    pSel.value = SHEET_ID;
+    pSel.innerHTML = '';
+    COMMISSION_WORKBOOKS.forEach(function(wb) {
+      var opt = new Option(wb.label, wb.id);
+      if (wb.id === SHEET_ID) opt.selected = true;
+      pSel.add(opt);
+    });
     SELECTED_PERIOD = SHEET_ID;
     updateWorkbookLink();
 
