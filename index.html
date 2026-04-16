@@ -303,7 +303,7 @@ async function renderIndividualProvider() {
           <div class="provider-name">${summary['Provider']}</div>
           <div class="comm-type ${type==='salary'?'type-salary':'type-commission'}">${type}</div>
         </div>
-        <div class="period-badge">${SELECTED_PERIOD}</div>
+        <div class="period-badge">${COMMISSION_WORKBOOKS.find(wb => wb.id === SELECTED_PERIOD)?.label || SELECTED_PERIOD}</div>
       </div>
 
       <div class="section-label">Performance Summary</div>
@@ -372,7 +372,7 @@ async function fetchDetails(providerName) {
             <th>Item</th>
             <th>Date</th>
             <th class="num">Amount</th>
-            <th>Commission</th>
+            <th class="num">Commission</th>
           </tr>
         </thead>
         <tbody>${tableRows}</tbody>
