@@ -210,7 +210,7 @@ async function loadData() {
       if (wb.id === SHEET_ID) opt.selected = true;
       pSel.add(opt);
     });
-    SELECTED_PERIOD = SHEET_ID;
+    SELECTED_PERIOD = COMMISSION_WORKBOOKS.find(wb => wb.id === SHEET_ID)?.label || SHEET_ID;
     updateWorkbookLink();
 
     // Reset provider dropdown with fresh provider list
@@ -240,13 +240,13 @@ function updateView() {
 
   // If pay period changed, reload data from new workbook
   if (newPeriod !== SELECTED_PERIOD) {
-    SELECTED_PERIOD = newPeriod;
+    SELECTED_PERIOD = COMMISSION_WORKBOOKS.find(wb => wb.id === newPeriod)?.label || newPeriod;
     SHEET_ID = newPeriod;
     updateWorkbookLink();
     loadData();
     return;
   }
-  SELECTED_PERIOD = newPeriod;
+  SELECTED_PERIOD = COMMISSION_WORKBOOKS.find(wb => wb.id === newPeriod)?.label || newPeriod;
 
   if(SELECTED_PROV === 'all') {
     renderAllProviders();
