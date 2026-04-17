@@ -411,23 +411,12 @@ function fmt(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits:
 function setProvider(p) { document.getElementById('providerSelect').value = p; updateView(); }
 
 function exportPDF() {
-  const el = document.getElementById('reportContainer');
   const provider = document.getElementById('providerSelect').value;
-  const period = document.getElementById('periodSelect').value.replace(/[^a-z0-9]/gi, '_');
-
-  html2canvas(el, { scale: 2, backgroundColor: '#f4efea', useCORS: true }).then(canvas => {
-    const imgData = canvas.toDataURL('image/png');
-    const w = canvas.width;
-    const h = canvas.height;
-    const ratio = w / h;
-    const pdfW = 8.5 * 72;
-    const pdfH = pdfW / ratio;
-
-    const link = document.createElement('a');
-    link.download = `GIOVA-Commission-${provider}-${period}.png`;
-    link.href = imgData;
-    link.click();
-  });
+  const periodLabel = COMMISSION_WORKBOOKS.find(wb => wb.id === SELECTED_PERIOD)?.label || '';
+  const origTitle = document.title;
+  document.title = `${provider} - ${periodLabel} Commission Report`;
+  window.print();
+  document.title = origTitle;
 }
 
 /* Print-based PDF export — cleanest output */
@@ -437,24 +426,21 @@ function printPDF() {
 
 function emailPDF() {
   const provider = document.getElementById('providerSelect').value;
-  const period = document.getElementById('periodSelect').value;
-  const el = document.getElementById('reportContainer');
-  if (!el) return;
+  const periodLabel = COMMISSION_WORKBOOKS.find(wb => wb.id === SELECTED_PERIOD)?.label || '';
 
-  // Step 1: Download the report image so Bonnie can attach it
-  html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
-    const link = document.createElement('a');
-    link.download = `Commission_${provider.replace(/[^a-zA-Z0-9]/g,'_')}_${period.replace(/[^a-zA-Z0-9]/g,'_')}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+  // Step 1: Save report as PDF via print dialog (Cmd+S or "Save as PDF" in print)
+  // Set document title so the saved PDF filename is clean
+  const origTitle = document.title;
+  document.title = `${provider} - ${periodLabel} Commission Report`;
+  window.print();
+  document.title = origTitle;
 
-    // Step 2: Open email with subject + body pre-filled (after short delay for download)
-    setTimeout(() => {
-      const subject = encodeURIComponent(`Giova Commission Report: ${provider} (${period})`);
-      const body = encodeURIComponent(`Hi ${provider},\n\nPlease find your commission report for ${period} attached.\n\nBest,\nBonnie`);
-      window.location.href = `mailto:?subject=${subject}&body=${body}`;
-    }, 500);
-  });
+  // Step 2: Open email with subject + body pre-filled (after print dialog closes)
+  setTimeout(() => {
+    const subject = encodeURIComponent(`${provider} - ${periodLabel} Commission Report`);
+    const body = encodeURIComponent(`Hi ${provider},\n\nPlease find your commission report for the ${periodLabel} pay period attached.\n\nBest,\nBonnie`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }, 1000);
 }
 
 </script>
