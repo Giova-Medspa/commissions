@@ -440,11 +440,20 @@ function emailPDF() {
   const period = document.getElementById('periodSelect').value;
   const el = document.getElementById('reportContainer');
   if (!el) return;
+
+  // Step 1: Download the report image so Bonnie can attach it
   html2canvas(el, { scale: 2, useCORS: true }).then(canvas => {
     const link = document.createElement('a');
     link.download = `Commission_${provider.replace(/[^a-zA-Z0-9]/g,'_')}_${period.replace(/[^a-zA-Z0-9]/g,'_')}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
+
+    // Step 2: Open email with subject + body pre-filled (after short delay for download)
+    setTimeout(() => {
+      const subject = encodeURIComponent(`Giova Commission Report: ${provider} (${period})`);
+      const body = encodeURIComponent(`Hi ${provider},\n\nPlease find your commission report for ${period} attached.\n\nBest,\nBonnie`);
+      window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }, 500);
   });
 }
 
